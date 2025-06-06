@@ -1,4 +1,8 @@
 {
   "name": "dagger_error",
-  "engineVersion": "v0.18.9"
+  "engineVersion": "v0.18.9",
+  "sdk": {
+    "source": "python"
+  },
+  "source": ".dagger"
 }
