@@ -34,13 +34,13 @@ class DaggerError:
             .from_("openjdk:17-jdk-alpine")
             .with_mounted_directory("/app", source)
             .with_workdir("/app")
-            .with_exec(["./gradlew", "build", "--no-daemon"])
+            .with_exec(["./gradle", "build", "--no-daemon"])
         )
 
         # Then run tests and return output
         return await (
             build_container
-            .with_exec(["./gradlew", "test", "--no-daemon"])
+            .with_exec(["./gradle", "test", "--no-daemon"])
             .stdout()
         )
 
