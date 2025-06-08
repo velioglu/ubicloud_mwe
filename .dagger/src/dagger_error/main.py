@@ -2,44 +2,38 @@ from dagger import dag, function, object_type, Container, Directory
 
 @object_type
 class DaggerError:
+
     @function
-    def build_kotlin_app(self, source: Directory) -> Container:
-        """Builds the Kotlin application using Gradle"""
+    async def kotlin_test_build(self, source: Directory) -> Container:
+        """Prepares the test build container"""
         return (
             dag.container()
             .from_("gradle:8.11.1-jdk21-alpine")
             .with_mounted_directory("/app", source)
             .with_workdir("/app")
-            .with_exec(["gradle", "build", "--no-daemon"])
-        )
-
-    @function
-    async def run_kotlin_tests(self, source: Directory) -> str:
-        """Runs the Kotlin tests and returns the output"""
-        return await (
-            dag.container()
-            .from_("gradle:8.11.1-jdk21-alpine")
-            .with_mounted_directory("/app", source)
-            .with_workdir("/app")
-            .with_exec(["gradle", "kotest", "--no-daemon"])
-            .stdout()
+            # .with_exec(["gradle", "buildFatJar", "--no-daemon"])
         )
 
     @function
     async def build_and_test(self, source: Directory) -> str:
         """Builds the Kotlin application and runs tests, returning test results"""
-        # First build the application
-        build_container = (
-            dag.container()
-            .from_("gradle:8.11.1-jdk21-alpine")
-            .with_mounted_directory("/app", source)
-            .with_workdir("/app")
-            .with_exec(["gradle", "build", "--no-daemon"])
+        test_build = await self.kotlin_test_build(source)
+        return await (
+            test_build
+            .with_service_binding("docker", dag.testcontainers().docker_service())
+            .with_env_variable("DOCKER_HOST", "tcp://docker:2375")
+            .with_env_variable("TESTCONTAINERS_RYUK_DISABLED", "true")
+            .with_exec(["gradle", "kotest"])
+            .stderr()
         )
 
-        # Then run tests and return output
+    @function
+    async def test_without_docker(self, source: Directory) -> str:
+        """Alternative: Runs tests with Docker disabled for Testcontainers"""
+        test_build = await self.kotlin_test_build(source)
         return await (
-            build_container
-            .with_exec(["gradle", "kotest", "--no-daemon"])
-            .stdout()
+            test_build
+            .with_env_variable("TESTCONTAINERS_CHECKS_DISABLE", "true")
+            .with_exec(["gradle", "kotest"])
+            .stderr()
         )

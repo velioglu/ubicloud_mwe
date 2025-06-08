@@ -2,6 +2,7 @@ package com.example
 
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
+import io.kotest.mpp.log
 import org.testcontainers.containers.GenericContainer
 
 class ApplicationTest : FunSpec({
@@ -17,8 +18,13 @@ class ApplicationTest : FunSpec({
 
     test("Alpine container should say Hello World") {
         val alpine = GenericContainer("alpine:latest")
-            .withCommand("sh", "-c", "echo Hello World") // Command to execute inside the container)
-        alpine.start()
+            .withCommand("sh", "-c", "echo Hello World")
+        try {
+            alpine.start()
+        } catch (e: Exception) {
+            println("Failed to start container: ${e.message}")
+            throw e
+        }
         alpine.logs shouldBe "Hello World\n"
     }
 })
