@@ -7,7 +7,7 @@ class DaggerError:
         """Builds the Kotlin application using Gradle"""
         return (
             dag.container()
-            .from_("openjdk:21-jdk-alpine")
+            .from_("gradle:8.11.1-jdk21-alpine")
             .with_mounted_directory("/app", source)
             .with_workdir("/app")
             .with_exec(["./gradlew", "build", "--no-daemon"])
@@ -18,7 +18,7 @@ class DaggerError:
         """Runs the Kotlin tests and returns the output"""
         return await (
             dag.container()
-            .from_("openjdk:21-jdk-alpine")
+            .from_("gradle:8.11.1-jdk21-alpine")
             .with_mounted_directory("/app", source)
             .with_workdir("/app")
             .with_exec(["./gradlew", "test", "--no-daemon"])
