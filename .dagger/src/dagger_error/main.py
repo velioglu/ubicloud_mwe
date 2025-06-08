@@ -10,7 +10,7 @@ class DaggerError:
             .from_("gradle:8.11.1-jdk21-alpine")
             .with_mounted_directory("/app", source)
             .with_workdir("/app")
-            .with_exec(["./gradlew", "build", "--no-daemon"])
+            .with_exec(["./gradle", "build", "--no-daemon"])
         )
 
     @function
@@ -21,7 +21,7 @@ class DaggerError:
             .from_("gradle:8.11.1-jdk21-alpine")
             .with_mounted_directory("/app", source)
             .with_workdir("/app")
-            .with_exec(["./gradlew", "test", "--no-daemon"])
+            .with_exec(["./gradle", "test", "--no-daemon"])
             .stdout()
         )
 
