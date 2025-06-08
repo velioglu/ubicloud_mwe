@@ -31,7 +31,7 @@ class DaggerError:
         # First build the application
         build_container = (
             dag.container()
-            .from_("openjdk:17-jdk-alpine")
+            .from_("gradle:8.11.1-jdk21-alpine")
             .with_mounted_directory("/app", source)
             .with_workdir("/app")
             .with_exec(["./gradle", "build", "--no-daemon"])
@@ -41,22 +41,5 @@ class DaggerError:
         return await (
             build_container
             .with_exec(["./gradle", "test", "--no-daemon"])
-            .stdout()
-        )
-
-    @function
-    def container_echo(self, string_arg: str) -> Container:
-        """Returns a container that echoes whatever string argument is provided"""
-        return dag.container().from_("alpine:latest").with_exec(["echo", string_arg])
-
-    @function
-    async def grep_dir(self, directory_arg: Directory, pattern: str) -> str:
-        """Returns lines that match a pattern in the files of the provided Directory"""
-        return await (
-            dag.container()
-            .from_("alpine:latest")
-            .with_mounted_directory("/mnt", directory_arg)
-            .with_workdir("/mnt")
-            .with_exec(["grep", "-R", pattern, "."])
             .stdout()
         )
