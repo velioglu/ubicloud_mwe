@@ -4,17 +4,17 @@ on:
       branches: [main]
 
 jobs:
-   hello:
-      name: hello
+   build-and-test:
+      name: build-and-test
       runs-on: ubicloud-standard-2-ubuntu-2404
       steps:
-         - name: Call Dagger Function
+         - name: Checkout code
+           uses: actions/checkout@v4
+
+         - name: Build and Test Kotlin App
            uses: dagger/dagger-for-github@8.0.0
            with:
               version: "latest"
-              module: github.com/shykes/daggerverse/hello@v0.1.2
-              args: hello --greeting="bonjour" --name="monde"
-              # assumes the Dagger Cloud token is in
-              # a repository secret named DAGGER_CLOUD_TOKEN
-              # set via the GitHub UI/CLI
+              module: ./.dagger
+              args: build-and-test --source=.
               cloud-token: ${{ secrets.DAGGER_CLOUD_TOKEN }}
