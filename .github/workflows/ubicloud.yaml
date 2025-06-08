@@ -16,5 +16,5 @@ jobs:
            with:
               version: "latest"
               module: ./.dagger
-              args: build-and-test --source=.
+              args: build-and-test --source=ktor-sample
               cloud-token: ${{ secrets.DAGGER_CLOUD_TOKEN }}
