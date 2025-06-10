@@ -15,4 +15,4 @@ jobs:
            with:
               version: "latest"
               module: ./.dagger
-              args: build-and-test --source=ktor-sample
+              args: test-without-docker --source=ktor-sample
