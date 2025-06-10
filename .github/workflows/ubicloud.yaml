@@ -16,18 +16,19 @@ jobs:
          - name: Docker info
            run: docker info
 
-         - name: Network Diagnostics
+         - name: Test Docker from Container
            run: |
-             echo "Testing network connectivity..."
-             curl -v https://registry-1.docker.io/v2/
-             echo "Testing DNS resolution..."
-             nslookup registry-1.docker.io
-             echo "Checking Docker daemon..."
-             docker info
-             echo "Testing Docker Hub connectivity..."
-             docker pull alpine:3.19
-             docker save alpine:3.19 > alpine.tar
-             docker load < alpine.tar
+             echo "=== Before Docker-in-Docker ==="
+             docker images | grep alpine || echo "No Alpine image found"
+             
+             echo "=== Starting Docker-in-Docker ==="
+             docker run --rm \
+               -v /var/run/docker.sock:/var/run/docker.sock \
+               docker:latest \
+               sh -c 'echo "Inside container: $(docker images)" && docker pull alpine:3.19 && echo "Pull completed" && docker images | grep alpine'
+             
+             echo "=== After Docker-in-Docker ==="
+             docker images | grep alpine || echo "No Alpine image found"
 
          - name: Build and Test Kotlin App
            uses: dagger/dagger-for-github@8.0.0
