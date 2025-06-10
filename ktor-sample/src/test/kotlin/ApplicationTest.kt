@@ -17,7 +17,7 @@ class ApplicationTest : FunSpec({
      */
 
     test("Alpine container should say Hello World") {
-        val alpine = GenericContainer("alpine:latest")
+        val alpine = GenericContainer("alpine:3.19")
             .withCommand("sh", "-c", "echo Hello World")
         try {
             alpine.start()

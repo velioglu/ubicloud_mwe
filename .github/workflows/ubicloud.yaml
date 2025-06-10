@@ -25,7 +25,9 @@ jobs:
              echo "Checking Docker daemon..."
              docker info
              echo "Testing Docker Hub connectivity..."
-             docker pull hello-world
+             docker pull alpine:3.19
+             docker save alpine:3.19 > alpine.tar
+             docker load < alpine.tar
 
          - name: Build and Test Kotlin App
            uses: dagger/dagger-for-github@8.0.0
