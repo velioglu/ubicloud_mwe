@@ -20,13 +20,12 @@ class DaggerError:
         test_build = await self.kotlin_test_build(source)
         return await (
             test_build
-            .with_service_binding("docker", dag.testcontainers().docker_service())
-            .with_unix_socket("/var/run/docker.sock")  # Mounts socket into container
+            .with_unix_socket(dag.host().unix_socket("/var/run/docker.sock"))
+            .with_env_variable("DOCKER_HOST", "unix:///var/run/docker.sock")
             .with_env_variable("TESTCONTAINERS_RYUK_DISABLED", "true")
             .with_env_variable("TESTCONTAINERS_DEBUG", "true")
-            .with_env_variable("DOCKER_HOST", "unix:///var/run/docker.sock")
             .with_env_variable("TESTCONTAINERS_DOCKER_CLIENT_STRATEGY", "org.testcontainers.dockerclient.UnixSocketClientProviderStrategy")
-            .with_exec(["sh", "-c", "env && gradle kotest"])
+            .with_exec(["gradle", "kotest"])
             .stderr()
         )
 
