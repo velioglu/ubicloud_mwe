@@ -8,7 +8,7 @@ jobs:
       runs-on: ${{ matrix.runs-on }}
       strategy:
         matrix:
-          runs-on: [ubicloud-standard-4-ubuntu-2404, ubuntu-latest]
+          runs-on: [ubicloud-standard-4-ubuntu-2404]
       steps:
          - name: Checkout code
            uses: actions/checkout@v4
