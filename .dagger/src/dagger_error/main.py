@@ -21,12 +21,12 @@ class DaggerError:
         return await (
             test_build
             .with_service_binding("docker", dag.testcontainers().docker_service())
-            .with_env_variable("DOCKER_HOST", "tcp://docker:2375")
+            .with_unix_socket("/var/run/docker.sock")  # Mounts socket into container
             .with_env_variable("TESTCONTAINERS_RYUK_DISABLED", "true")
             .with_env_variable("TESTCONTAINERS_DEBUG", "true")
+            .with_env_variable("DOCKER_HOST", "unix:///var/run/docker.sock")
             .with_env_variable("TESTCONTAINERS_DOCKER_CLIENT_STRATEGY", "org.testcontainers.dockerclient.UnixSocketClientProviderStrategy")
-            .with_env_variable("TESTCONTAINERS_DOCKER_SOCKET_OVERRIDE", "/var/run/docker.sock")
-            .with_exec(["gradle", "kotest"])
+            .with_exec(["sh", "-c", "env && gradle kotest"])
             .stderr()
         )
 
