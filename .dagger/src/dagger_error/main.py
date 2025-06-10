@@ -21,6 +21,7 @@ class DaggerError:
         return await (
             test_build
             .with_service_binding("docker", dag.testcontainers().docker_service())
+            .with_exec(["docker", "pull", "alpine:latest"])
             .with_env_variable("DOCKER_HOST", "tcp://docker:2375")
             .with_env_variable("TESTCONTAINERS_RYUK_DISABLED", "true")
             .with_exec(["gradle", "kotest"])
