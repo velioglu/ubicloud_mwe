@@ -23,6 +23,7 @@ jobs:
              
              echo "=== Starting Docker-in-Docker ==="
              docker run --rm \
+               -v /var/run/docker.sock:/var/run/docker.sock \
                docker:latest \
                sh -c 'echo "Inside container: $(docker images)" && docker pull alpine:3.19 && echo "Pull completed" && docker images | grep alpine'
              
