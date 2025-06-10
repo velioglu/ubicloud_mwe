@@ -8,7 +8,7 @@ class DaggerError:
         """Prepares the test build container"""
         return (
             dag.container()
-            .from_("docker:24.0-dind")
+            .from_("gradle:8.11.1-jdk21-alpine")
             .with_mounted_directory("/app", source)
             .with_workdir("/app")
             # .with_exec(["gradle", "buildFatJar", "--no-daemon"])
@@ -20,10 +20,10 @@ class DaggerError:
         test_build = await self.kotlin_test_build(source)
         return await (
             test_build
-            .with_env_variable("DOCKER_TLS_CERTDIR", "")  # disable TLS
+            .with_service_binding("docker", dag.testcontainers().docker_service())
+            .with_env_variable("DOCKER_HOST", "tcp://docker:2375")
             .with_env_variable("TESTCONTAINERS_RYUK_DISABLED", "true")
             .with_env_variable("TESTCONTAINERS_DEBUG", "true")
-            .with_exec(["sh", "-c", "dockerd-entrypoint.sh & sleep 5"])
             .with_exec(["gradle", "kotest"])
             .stderr()
         )
