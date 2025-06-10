@@ -13,7 +13,16 @@ jobs:
          - name: Checkout code
            uses: actions/checkout@v4
 
-         - name: Check docker exist
+         - name: Configure Docker
+           run: |
+             # Configure Docker to use Docker Hub directly without mirrors
+             sudo mkdir -p /etc/docker
+             echo '{
+               "registry-mirrors": []
+             }' | sudo tee /etc/docker/daemon.json
+             sudo systemctl restart docker
+
+         - name: Docker info
            run: docker info
 
          - name: Build and Test Kotlin App
