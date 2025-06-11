@@ -24,6 +24,11 @@ class DaggerError:
             .with_env_variable("DOCKER_HOST", "tcp://docker:2375")
             .with_env_variable("TESTCONTAINERS_RYUK_DISABLED", "true")
             .with_env_variable("TESTCONTAINERS_DEBUG", "true")
+            # Additional settings for better network compatibility
+            .with_env_variable("TESTCONTAINERS_DOCKER_SOCKET_OVERRIDE", "/var/run/docker.sock")
+            .with_env_variable("TESTCONTAINERS_REUSE_ENABLE", "true")
+            .with_env_variable("TESTCONTAINERS_CONNECT_TIMEOUT", "300")
+            .with_env_variable("TESTCONTAINERS_READ_TIMEOUT", "300")
             .with_exec(["gradle", "kotest"])
             .stderr()
         )
